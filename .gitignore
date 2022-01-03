@@ -1,0 +1,6 @@
+.gitignore
+.qmake.stash
+*.o
+moc_*
+ui_mainwindow.h 
+MrrServerSide.pro.user
