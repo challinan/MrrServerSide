@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 #include "serialcomms.h"
+#include "config_object.h"
+#include <QAudioDevice>
+#include <QMediaDevices>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -16,8 +19,15 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_quit_pButton_clicked();
+    void on_config_pButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     SerialComms *serialComms_p;
+    ConfigObject *config_p;
+    QMediaDevices *media_dev_p;
+    QList<QAudioDevice> audio_inputs;
 };
 #endif // MAINWINDOW_H
