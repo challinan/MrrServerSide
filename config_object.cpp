@@ -26,6 +26,7 @@ ConfigObject::ConfigObject(QObject *parent)
     QTextStream in(&file);
     while (!in.atEnd()) {
         QString line = in.readLine();
+        if ( line.startsWith("#") ) continue;   // Discard comments
         process_line(line);
     }
     file.close();
@@ -37,7 +38,7 @@ void ConfigObject::process_line(QString s) {
     QString tmp_key = s.section(',', 0 , 0);
     QString tmp_value = s.section(',', 1);
     configMap.insert(tmp_key, tmp_value);
-    qDebug() << "process_line: " << "tmp_key = " << tmp_key << "  tmp_value = " << tmp_value;
+    // qDebug() << "process_line: " << "tmp_key = " << tmp_key << "  tmp_value = " << tmp_value;
 }
 
 void ConfigObject::open_config_dialog() {
@@ -146,7 +147,7 @@ void ConfigObject::write_map_to_disk() {
     file.close();
 }
 
-QString ConfigObject::get_value_from_key(QString &key) {
+QString ConfigObject::get_value_from_key(QString key) {
     return configMap.value(key);
 }
 

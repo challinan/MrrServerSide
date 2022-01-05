@@ -13,13 +13,25 @@ class SerialComms : public QObject
     Q_OBJECT
 public:
     explicit SerialComms(QObject *parent = nullptr);
-   QList<QSerialPortInfo> &get_pList();
+    ~SerialComms();
+    QList<QSerialPortInfo> &get_pList();
+    void enumerate_serial_devices();
+    void setConfigSerialStr(QString s);
+    int openSerialPort();
 
 private:
-    QString serial_port;
-    QList<QSerialPortInfo> port_info;
+    void close_serial_port();
+
+
+private:
+    QString config_serial_str;
+    QSerialPortInfo selected_serial_port_from_config;
+    QList<QSerialPortInfo> port_info_list;
+    QSerialPort *active_serial_port_p;
+
 
 signals:
+    void on_serial_port_detected(QString &s);
 
 };
 
