@@ -1,0 +1,1 @@
+1) check for need to disconnect() signals/slots on cleanup, network close, shutdown, etc

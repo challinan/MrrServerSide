@@ -16,13 +16,13 @@ MainWindow::MainWindow(QWidget *parent)
     config_p->debug_display_map();  // Debug only
 
     // Initialize serial port object
-    serialComms_p = new SerialComms();
-    connect(serialComms_p, &SerialComms::on_serial_port_detected, this, &MainWindow::serial_port_detected);
+    serial_comms_p = new SerialComms();
+    connect(serial_comms_p, &SerialComms::on_serial_port_detected, this, &MainWindow::serial_port_detected);
 
     // Place our requested serial port config value in combox box (comes from our config file)
     QString config_serial_str = config_p->get_value_from_key("Serial Port");
-    serialComms_p->setConfigSerialStr(config_serial_str);
-    serialComms_p->enumerate_serial_devices();
+    serial_comms_p->setConfigSerialStr(config_serial_str);
+    serial_comms_p->enumerate_serial_devices();
     qDebug() << "MainWindow::MainWindow() Constructor: config_serial_str =" << config_serial_str;
     if ( !config_serial_str.isEmpty() ) {
         for ( int index=0; index < ui->serialPortComboBox->count(); index++ ) {
@@ -56,12 +56,20 @@ MainWindow::MainWindow(QWidget *parent)
     QString config_rig_str = config_p->get_value_from_key(QString("Rig Model"));
     ui->rigComboBox->insertItem(0, config_rig_str);
 
+    // Initialize network TCP Listener
+    network_comms_p = new NetworkComms();
+    network_comms_p->setSerialObjectPointer(serial_comms_p);
+    serial_comms_p->setNetcommObjPointer(network_comms_p);
+
     // Misc variable initialization
     serial_comboxbox_index = 0;
 }
 
 MainWindow::~MainWindow()
 {
+    delete serial_comms_p;
+    delete config_p;
+    delete network_comms_p;
     delete ui;
 }
 
@@ -92,34 +100,64 @@ void MainWindow::initializeUiLabels() {
 void MainWindow::runNetcatProcess() {
 
     // nc -6 -l 4532 </dev/cu.usbserial-1430 >/dev/cu.usbserial-1420
+    qDebug() << Qt::endl << "MainWindow::runNetcatProcess(): entered";
     QString serial_port_device = config_p->get_value_from_key("Serial Port");
     if ( serial_port_device.isEmpty() ) {
         qDebug() << "MainWindow::runNetcatProcess() failed to get config value - exiting";
         QApplication::quit();
     }
-#if 0
-    QString program = "/usr/bin/nc";
+    qDebug() << "MainWindow::runNetcatProcess(): serial_port_device =" << serial_port_device;
+    QString serial_port_full_path_in_qstr = "</dev/" + serial_port_device;
+    QString serial_port_full_path_out_qstr = ">/dev/" + serial_port_device;
+    qDebug() << "MainWindow::runNetcatProcess(): serial_port_full_path_qstr =" << serial_port_full_path_in_qstr << serial_port_full_path_out_qstr;
+
+    // QString program = "/bin/bash -c";
+    QString program = "/Users/chris/test";
     QStringList arguments;
-    arguments << "blue";
+    // arguments << "-6 " << "-l" << "4532" << serial_port_full_path_in_qstr << serial_port_full_path_out_qstr;
+    // arguments << "\"" << "-6 " << "-l" << "4532" << "\"" << "\n";
+
+    QStringList::const_iterator i;
+    for (i = arguments.constBegin(); i != arguments.constEnd(); i++)
+        qDebug() << (*i).toLocal8Bit().constData();
 
     QProcess *myProcess = new QProcess(this);
     myProcess->start(program, arguments);
+    bool started = myProcess->waitForStarted(5000);
+    qDebug() << "MainWindow::runNetcatProcess(): started =" << started;
+    bool res2 = myProcess->waitForFinished(30000);
+    QByteArray stdError = myProcess->readAllStandardError();
+    qDebug() << "MainWindow::waitForFinished(): return code is" << res2;
     int res = myProcess->exitCode();
-#endif
+    qDebug() << "MainWindow::runNetcatProcess(): return code is" << res;
+    qDebug() << "stderr: " << QString(stdError);
+    delete myProcess;
 }
 
 void MainWindow::on_run_pButton_clicked()
 {
     qDebug() << "MainWindow::on_run_pButton_clicked()";
-    serialComms_p->openSerialPort();
+    static bool running = false;
+
+    if ( running ) return;
+    serial_comms_p->openSerialPort();
+    network_comms_p->openNetworkListener();
+    running = true;
 }
 
 void MainWindow::serial_port_detected(QString &s) {
     ui->serialPortComboBox->insertItem(serial_comboxbox_index++, s);
+    // qDebug() << "MainWindow::serial_port_detected()" << s;
 }
 
 void MainWindow::on_serialPortComboBox_activated(int index)
 {
     qDebug() << "MainWindow::on_serialPortComboBox_activated: " << index;
+}
+
+
+void MainWindow::on_netcat_pButton_clicked()
+{
+    runNetcatProcess();
 }
 

@@ -18,11 +18,13 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     config_object.cpp \
+    networkcomms.cpp \
     serialcomms.cpp
 
 HEADERS += \
     mainwindow.h \
     config_object.h \
+    networkcomms.h \
     serialcomms.h
 
 FORMS += \
@@ -35,3 +37,6 @@ QMAKE_MACOSX_DEPLOYMENT_TARGET = "10.15"
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    TODO.txt
