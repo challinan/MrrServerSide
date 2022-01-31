@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent)
     QString config_rig_str = config_p->get_value_from_key(QString("Rig Model"));
     ui->rigComboBox->insertItem(0, config_rig_str);
 
-    // Initialize network TCP Listener
+    // Initialize network TCP Listener for CAT communications
     network_comms_p = new NetworkComms();
     network_comms_p->setSerialObjectPointer(serial_comms_p);
     serial_comms_p->setNetcommObjPointer(network_comms_p);
@@ -142,6 +142,10 @@ void MainWindow::on_run_pButton_clicked()
     if ( running ) return;
     serial_comms_p->openSerialPort();
     network_comms_p->openNetworkListener();
+
+    // Initialize Gstreamer and start streaming audio
+    GST_Server_p = new GstreamerServerSide();
+    GST_Server_p->start();  // start() unlike run() detaches and returns immediately
     running = true;
 }
 

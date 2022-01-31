@@ -8,6 +8,7 @@
 #include "serialcomms.h"
 #include "config_object.h"
 #include "networkcomms.h"
+#include "gstreamer_serverside.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -41,6 +42,7 @@ private:
     void initializeUiLabels();
     void runNetcatProcess();
     int serial_comboxbox_index;
+    GstreamerServerSide *GST_Server_p;
 
 public slots:
     void serial_port_detected(QString &s);

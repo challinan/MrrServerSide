@@ -57,7 +57,8 @@ void NetworkComms::connected() {
 
 // Slot: QAbstractSocket::disconnected()
 void NetworkComms::disconnected() {
-    qDebug() << "NetworkComms::disconnected(): slot entered";
+    qDebug() << "NetworkComms::disconnected(): slot entered - closing tcpsocket";
+    tcp_socket_p->close();
 }
 
 // Slot: called by signal readyRead from QIODevice (TCPSocket)

@@ -1,1 +1,6 @@
 1) check for need to disconnect() signals/slots on cleanup, network close, shutdown, etc
+
+2) Add gstreamer launch pipeline for client
+gst-launch-1.0 -v osxaudiosrc device=44 ! audioconvert ! audioresample ! audio/x-raw, rate=48000, channels=1 ! rtpL16pay  ! udpsink host=chris-mbp16 port=5000
+
+
