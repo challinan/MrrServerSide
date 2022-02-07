@@ -16,7 +16,7 @@ void GstreamerServerSide::run() {
     // gst-launch-1.0 -v osxaudiosrc device=44 ! audioconvert ! audioresample ! audio/x-raw, rate=48000, channels=1 ! rtpL16pay  ! udpsink host=chris-mbp16 port=5000
     //
 
-    pipeline = gst_parse_launch("osxaudiosrc device=44 ! audio/x-raw, rate=48000, channels=1 ! audioresample !\
+    pipeline = gst_parse_launch("osxaudiosrc device=44 ! audio/x-raw, rate=48000, channels=1 ! audioresample ! \
                                  audio/x-raw, rate=44100 ! rtpL16pay ! rtpjitterbuffer mode=synced ! udpsink host=chris-mbp16 port=5000", &gst_error);
 
     qDebug() << "gst_parse_launcher() returned" << gst_error;

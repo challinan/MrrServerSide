@@ -107,12 +107,16 @@ int SerialComms::write_serial_data() {
 
 // Slot - called by signal serial_out() in networkcomms to indicate serial data ready to send out
 void SerialComms::net_data_2_serial_out(QByteArray &b) {
+
+#if 0
     qDebug() << "SerialComms::net_data_2_serial_out(): entered - message size" << b.size();
     fprintf(stderr, "\n");
     for ( int i=0; i< b.size(); i++ ) {
         fprintf(stderr, "%c", b.at(i));
     }
     fprintf(stderr, "\n");
+#endif
+
     write_buffer.clear();
     write_buffer = b;
     write_serial_data();
@@ -122,7 +126,7 @@ void SerialComms::net_data_2_serial_out(QByteArray &b) {
 void SerialComms::slot_readyRead() {
     static int count = 0;
     read_serial_data();
-    qDebug() << "SerialComms::slot_readyRead():" << ++count;
+    // qDebug() << "SerialComms::slot_readyRead():" << ++count;
 }
 
 int SerialComms::read_serial_data() {
@@ -142,11 +146,11 @@ int SerialComms::read_serial_data() {
     }
 
 rsd_finish:
-    qDebug() << "SerialComms::read_serial_data(): read" << read_buffer.size() << "bytes";
-    for ( int i=0; i<read_buffer.size(); i++ ) {
-        fprintf(stderr, "%c", read_buffer.at(i));
-    }
-    fprintf(stderr, "\n");
+    // qDebug() << "SerialComms::read_serial_data(): read" << read_buffer.size() << "bytes";
+    // for ( int i=0; i<read_buffer.size(); i++ ) {
+        // fprintf(stderr, "%c", read_buffer.at(i));
+    // }
+    // fprintf(stderr, "\n");
     emit serial_rx(read_buffer);        // Alert Network stack we have data ready to send out the Socket
     read_buffer.clear();
 
@@ -159,8 +163,8 @@ void SerialComms::clear_serial_port_inbuffer() {
     int count = 0;
     qDebug() << "SerialComms::clear_serial_port_inbuffer(): entered - waiting";
 
-    // This function blocks until readReady - default time out 30 seconds, let's try 3 seconds
-    if ( active_serial_port_p->waitForReadyRead(3000) == false ) { return; }
+    // This function blocks until readReady - default time out 30 seconds, let's try 1 seconds
+    if ( active_serial_port_p->waitForReadyRead(1000) == false ) { return; }
     while ( count < 500 ) {
         if ( active_serial_port_p->QSerialPort::bytesAvailable() )
             rc += active_serial_port_p->read(&b, 1);

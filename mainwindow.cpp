@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Initialize configuration subsystem
     config_p = new ConfigObject;
-    config_p->debug_display_map();  // Debug only
+    config_p->debug_display_map();  // For debug only
 
     // Initialize serial port object
     serial_comms_p = new SerialComms();
