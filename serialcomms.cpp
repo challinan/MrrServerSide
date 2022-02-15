@@ -124,9 +124,8 @@ void SerialComms::net_data_2_serial_out(QByteArray &b) {
 
 // Slot
 void SerialComms::slot_readyRead() {
-    static int count = 0;
+
     read_serial_data();
-    // qDebug() << "SerialComms::slot_readyRead():" << ++count;
 }
 
 int SerialComms::read_serial_data() {
@@ -159,17 +158,18 @@ rsd_finish:
 
 void SerialComms::clear_serial_port_inbuffer() {
     int rc = 0;
-    char b;
+    char b[64];
     int count = 0;
     qDebug() << "SerialComms::clear_serial_port_inbuffer(): entered - waiting";
 
     // This function blocks until readReady - default time out 30 seconds, let's try 1 seconds
     if ( active_serial_port_p->waitForReadyRead(1000) == false ) { return; }
     while ( count < 500 ) {
+        int i = 0;
         if ( active_serial_port_p->QSerialPort::bytesAvailable() )
-            rc += active_serial_port_p->read(&b, 1);
+            rc += active_serial_port_p->read(&b[i++], 1);
         count++;
         QThread::msleep(2); // Wait a tiny bit for more data
     }
-    qDebug() << "SerialComms::clear_serial_port_inbuffer(): read" << rc << "bytes over" << count << "loops";
+    qDebug() << "SerialComms::clear_serial_port_inbuffer(): read" << rc << "bytes over" << count << "loops" << b;
 }

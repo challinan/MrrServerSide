@@ -11,7 +11,6 @@ NetworkComms::NetworkComms(QObject *parent)
     qDebug() << "NetworkComms::NetworkComms(): constructor entered";
     tcp_server_p = new QTcpServer;
     connect(tcp_server_p, &QTcpServer::newConnection, this, &NetworkComms::NewConnection);
-    // connect(tcp_server_p, &QAbstractSocket::connected, this, &NetworkComms::connected);
 
     // Initialize internal variables
     read_bytes_qstr.clear();
@@ -85,6 +84,21 @@ void NetworkComms::readData() {
         if ( buff[i] == 0x0a ) continue; // discard \n
         read_buffer.append(buff[i]);
     }
+
+    if ( read_buffer == "~ON~;" ) {
+        qDebug() << "NetworkComms::readData(): ~ON~ command received!";
+        read_buffer.clear();
+        emit startStopGstreamer(true);       // true = on/resume
+        return;
+    }
+
+    if ( read_buffer == "~OFF~;" ) {
+        qDebug() << "NetworkComms::readData(): ~OFF~ command received!";
+        read_buffer.clear();
+        emit startStopGstreamer(false);       // false = off
+        return;
+    }
+
     emit serial_out(read_buffer);
     read_buffer.clear();
 }
@@ -96,7 +110,8 @@ void NetworkComms::writeData(QByteArray ba) {
         QApplication::exit(3);
     } else {
     int rc = tcp_socket_p->write(ba.data(), ba.size());
-    // qDebug() << "NetworkComms::writeData(): writing" << rc << "bytes";
+    if ( rc == -1 )
+        qDebug() << "NetworkComms::writeData(): error writing" << rc << "bytes";
     }
 }
 

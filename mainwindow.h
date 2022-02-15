@@ -23,6 +23,9 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private:
+    void startServices();
+
 private slots:
     void on_quit_pButton_clicked();
     void on_config_pButton_clicked();

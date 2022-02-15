@@ -42,7 +42,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 # GStreamer support
-macx: LIBS += -L/Library/Frameworks/GStreamer.framework/Libraries -lgstreamer-1.0.0 -lglib-2.0.0
+macx: LIBS += -L/Library/Frameworks/GStreamer.framework/Libraries -lgstreamer-1.0.0 -lglib-2.0.0 -lgobject-2.0.0
 INCLUDEPATH += /Library/Frameworks/GStreamer.framework/Headers
 
 DISTFILES += \

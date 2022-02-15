@@ -63,6 +63,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Misc variable initialization
     serial_comboxbox_index = 0;
+
+    // Start it running
+    startServices();
+    connect(network_comms_p, &NetworkComms::startStopGstreamer, GST_Server_p, &GstreamerServerSide::startStopPlaying);
 }
 
 MainWindow::~MainWindow()
@@ -70,6 +74,9 @@ MainWindow::~MainWindow()
     delete serial_comms_p;
     delete config_p;
     delete network_comms_p;
+    GST_Server_p->terminate();
+    GST_Server_p->wait();
+    delete GST_Server_p;
     delete ui;
 }
 
@@ -134,9 +141,22 @@ void MainWindow::runNetcatProcess() {
     delete myProcess;
 }
 
-void MainWindow::on_run_pButton_clicked()
+void MainWindow::on_run_pButton_clicked() {
+
+    static bool playing = true;
+
+    if ( !playing ) {
+        GST_Server_p->startStopPlaying(true);
+    }
+    else {
+        GST_Server_p->startStopPlaying(false);
+    }
+
+    playing = !playing;
+}
+
+void MainWindow::startServices()
 {
-    qDebug() << "MainWindow::on_run_pButton_clicked()";
     static bool running = false;
 
     if ( running ) return;

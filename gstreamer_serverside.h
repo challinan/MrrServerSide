@@ -12,12 +12,36 @@ public:
     virtual void run();
 
 private:
+    const char *getStateString(GstState state);
+    const char *getResultString(GstStateChangeReturn ret);
+    int setupPipeline();
+    void releaseElements();
+    void print_status_of_all();
+    int factoryMakeAndAdd(GstElement **e, const char *name, const char *myname);
+
+private:
+    //
+    //osxaudiosrc device=44 ! audio/x-raw, rate=48000, channels=1 ! audioresample ! \
+    // audio/x-raw, rate=44100 ! rtpL16pay ! rtpjitterbuffer mode=synced ! udpsink host=chris-mbp16 port=5000
+    //
     GstElement *pipeline;
-    GError *gst_error = NULL;
+    GstElement *source;
+    GstElement *resample;
+    GstElement *payloader;
+    GstElement *jitterbuf;
+    GstElement *sink;
+
+    GstCaps *src_caps;
+    GstCaps *resample_caps;
+
+    GError *gst_error;
     GstBus *bus;
     GstMessage *msg;
-    int argc = 0;
+    int argc;
     char **argv;
+
+public slots:
+    void startStopPlaying(bool start);
 
 signals:
 
