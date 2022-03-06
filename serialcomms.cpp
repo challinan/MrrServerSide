@@ -163,8 +163,8 @@ void SerialComms::clear_serial_port_inbuffer() {
     qDebug() << "SerialComms::clear_serial_port_inbuffer(): entered - waiting";
 
     // This function blocks until readReady - default time out 30 seconds, let's try 1 seconds
-    if ( active_serial_port_p->waitForReadyRead(1000) == false ) { return; }
-    while ( count < 500 ) {
+    if ( active_serial_port_p->waitForReadyRead(250) == false ) { return; }
+    while ( count < 100 ) {
         int i = 0;
         if ( active_serial_port_p->QSerialPort::bytesAvailable() )
             rc += active_serial_port_p->read(&b[i++], 1);

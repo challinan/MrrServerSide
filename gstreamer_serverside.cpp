@@ -38,7 +38,7 @@ void GstreamerServerSide::run() {
 
     /* Start playing */
     qDebug() << "GstreamerServerSide::run() called - creating pipeline in paused state";
-    gst_element_set_state(pipeline, GST_STATE_PLAYING);
+    gst_element_set_state(pipeline, GST_STATE_PAUSED);
 
     /* Wait until error or EOS */
     bus = gst_element_get_bus(pipeline);
@@ -80,9 +80,9 @@ void GstreamerServerSide::startStopPlaying(bool start) {
         qDebug() << "GstreamerServerSide::startStopPlaying(): changing state to PLAYING";
         result = gst_element_set_state(TE, GST_STATE_PLAYING);
         if ( result != GST_STATE_CHANGE_SUCCESS ) {
-            qDebug() << "GstreamerServerSide::startStopPlaying(): error going to PLAYING state" << getResultString(result);
+            // qDebug() << "GstreamerServerSide::startStopPlaying(): error going to PLAYING state" << getResultString(result);
             result = gst_element_get_state(TE, &state, &pending, 2000000);     // Nanoseconds
-            qDebug() << "GstreamerServerSide::startStopPlaying(): gst_element_get_state, result =" << getResultString(result) << "state =" << getStateString(state) << "pending =" << getStateString(pending);
+            // qDebug() << "GstreamerServerSide::startStopPlaying(): gst_element_get_state, result =" << getResultString(result) << "state =" << getStateString(state) << "pending =" << getStateString(pending);
         }
     }
     else

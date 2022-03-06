@@ -2,6 +2,7 @@
 #include <QApplication>
 
 // Implement a network listener to listen for data from the remote UI app
+// This implementation waits for connection from the remote end
 // Radio commands arrive by network and need to go out the serial port
 // Any incoming serial data needs to be sent back over the network connection
 
@@ -25,9 +26,9 @@ NetworkComms::~NetworkComms() {
 
 void NetworkComms::openNetworkListener() {
 
-    // This function called when "Run" button pushed.
+    // This function is called when the application starts
     qDebug() << "NetworkComms::openNetworkListner(): entered";
-    connect(this, &NetworkComms::serial_out, serial_comms_object_p, &SerialComms::net_data_2_serial_out);
+    // connect(this, &NetworkComms::serial_out, serial_comms_object_p, &SerialComms::net_data_2_serial_out);
     bool rc;
     rc = tcp_server_p->listen(MRR_SERVER_ADDR, MRR_NETWORK_PORT);
     if ( !rc ) {
@@ -46,18 +47,14 @@ void NetworkComms::NewConnection() {
     connect(tcp_socket_p, &QIODevice::readyRead, this, &NetworkComms::readData);
     connect(tcp_socket_p, &QAbstractSocket::errorOccurred, this, &NetworkComms::errorOccurredSlot);
     connect(tcp_socket_p, &QAbstractSocket::disconnected, this, &NetworkComms::disconnected);
-
-}
-
-// Slot: QAbstractSocket::connected()
-void NetworkComms::connected() {
-    qDebug() << "NetworkComms::connected(): ******************************** slot entered";
+    emit startStopGstreamer(true);  // Start streaming audio packets
 }
 
 // Slot: QAbstractSocket::disconnected()
 void NetworkComms::disconnected() {
-    qDebug() << "NetworkComms::disconnected(): slot entered - closing tcpsocket";
+    qDebug() << "NetworkComms::disconnected(): slot entered - closing tcpsocket - stopping GStreamer audio packets";
     tcp_socket_p->close();
+    emit startStopGstreamer(false);
 }
 
 // Slot: called by signal readyRead from QIODevice (TCPSocket)

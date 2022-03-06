@@ -67,6 +67,7 @@ MainWindow::MainWindow(QWidget *parent)
     // Start it running
     startServices();
     connect(network_comms_p, &NetworkComms::startStopGstreamer, GST_Server_p, &GstreamerServerSide::startStopPlaying);
+    connect(network_comms_p, &NetworkComms::serial_out, serial_comms_p, &SerialComms::net_data_2_serial_out);
 }
 
 MainWindow::~MainWindow()
@@ -143,7 +144,7 @@ void MainWindow::runNetcatProcess() {
 
 void MainWindow::on_run_pButton_clicked() {
 
-    static bool playing = true;
+    static bool playing = false;
 
     if ( !playing ) {
         GST_Server_p->startStopPlaying(true);
