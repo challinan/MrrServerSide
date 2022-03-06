@@ -1,0 +1,3 @@
+gst-launch-1.0 osxaudiosrc device=44 ! audio/x-raw, rate=48000, channels=1 ! audioresample ! audio/x-raw, rate=44100 ! rtpL16pay ! rtpjitterbuffer mode=synced ! udpsink host=chris-mbp16 port=5000
+
+gst-launch-1.0 osxaudiosrc device=44 ! audio/x-raw, rate=48000, channels=1 ! audioresample ! audio/x-raw, rate=44100 ! rtpL16pay ! rtpjitterbuffer mode=synced ! udpsink host=chris-mbp16 port=5000
