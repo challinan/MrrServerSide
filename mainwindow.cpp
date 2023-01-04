@@ -66,7 +66,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Start it running
     startServices();
-    connect(network_comms_p, &NetworkComms::startStopGstreamer, GST_Server_p, &GstreamerServerSide::startStopPlaying);
     connect(network_comms_p, &NetworkComms::serial_out, serial_comms_p, &SerialComms::net_data_2_serial_out);
 }
 
@@ -75,9 +74,6 @@ MainWindow::~MainWindow()
     delete serial_comms_p;
     delete config_p;
     delete network_comms_p;
-    GST_Server_p->terminate();
-    GST_Server_p->wait();
-    delete GST_Server_p;
     delete ui;
 }
 
@@ -105,53 +101,11 @@ void MainWindow::initializeUiLabels() {
     ui->run_pButton->setAutoDefault(true);
 }
 
-void MainWindow::runNetcatProcess() {
-
-    // nc -6 -l 4532 </dev/cu.usbserial-1430 >/dev/cu.usbserial-1420
-    qDebug() << Qt::endl << "MainWindow::runNetcatProcess(): entered";
-    QString serial_port_device = config_p->get_value_from_key("Serial Port");
-    if ( serial_port_device.isEmpty() ) {
-        qDebug() << "MainWindow::runNetcatProcess() failed to get config value - exiting";
-        QApplication::quit();
-    }
-    qDebug() << "MainWindow::runNetcatProcess(): serial_port_device =" << serial_port_device;
-    QString serial_port_full_path_in_qstr = "</dev/" + serial_port_device;
-    QString serial_port_full_path_out_qstr = ">/dev/" + serial_port_device;
-    qDebug() << "MainWindow::runNetcatProcess(): serial_port_full_path_qstr =" << serial_port_full_path_in_qstr << serial_port_full_path_out_qstr;
-
-    // QString program = "/bin/bash -c";
-    QString program = "/Users/chris/test";
-    QStringList arguments;
-    // arguments << "-6 " << "-l" << "4532" << serial_port_full_path_in_qstr << serial_port_full_path_out_qstr;
-    // arguments << "\"" << "-6 " << "-l" << "4532" << "\"" << "\n";
-
-    QStringList::const_iterator i;
-    for (i = arguments.constBegin(); i != arguments.constEnd(); i++)
-        qDebug() << (*i).toLocal8Bit().constData();
-
-    QProcess *myProcess = new QProcess(this);
-    myProcess->start(program, arguments);
-    bool started = myProcess->waitForStarted(5000);
-    qDebug() << "MainWindow::runNetcatProcess(): started =" << started;
-    bool res2 = myProcess->waitForFinished(30000);
-    QByteArray stdError = myProcess->readAllStandardError();
-    qDebug() << "MainWindow::waitForFinished(): return code is" << res2;
-    int res = myProcess->exitCode();
-    qDebug() << "MainWindow::runNetcatProcess(): return code is" << res;
-    qDebug() << "stderr: " << QString(stdError);
-    delete myProcess;
-}
 
 void MainWindow::on_run_pButton_clicked() {
 
     static bool playing = false;
-
-    if ( !playing ) {
-        GST_Server_p->startStopPlaying(true);
-    }
-    else {
-        GST_Server_p->startStopPlaying(false);
-    }
+    qDebug() << "MainWindow::on_run_pButton_clicked(): pressed";
 
     playing = !playing;
 }
@@ -164,13 +118,11 @@ void MainWindow::startServices()
     serial_comms_p->openSerialPort();
     network_comms_p->openNetworkListener();
 
-    // Initialize Gstreamer and start streaming audio
-    GST_Server_p = new GstreamerServerSide();
-    GST_Server_p->start();  // start() unlike run() detaches and returns immediately
     running = true;
 }
 
 void MainWindow::serial_port_detected(QString &s) {
+
     ui->serialPortComboBox->insertItem(serial_comboxbox_index++, s);
     // qDebug() << "MainWindow::serial_port_detected()" << s;
 }
@@ -178,11 +130,5 @@ void MainWindow::serial_port_detected(QString &s) {
 void MainWindow::on_serialPortComboBox_activated(int index)
 {
     qDebug() << "MainWindow::on_serialPortComboBox_activated: " << index;
-}
-
-
-void MainWindow::on_netcat_pButton_clicked()
-{
-    runNetcatProcess();
 }
 

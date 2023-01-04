@@ -8,7 +8,6 @@
 #include <QDataStream>
 #include <QByteArray>
 #include "serialcomms.h"
-#include "gstreamer_serverside.h"
 
 #define MRR_NETWORK_PORT 4532
 //#define MRR_SERVER_ADDR QHostAddress::LocalHost

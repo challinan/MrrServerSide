@@ -16,6 +16,9 @@ io_connect_t  root_port; // a reference to the Root Power Domain IOService
 void
 MySleepCallBack( void * refCon, io_service_t service, natural_t messageType, void * messageArgument )
 {
+    (void) service; // Squelch compiler warning of unused variable
+    (void) refCon; // Squelch compiler warning of unused variable
+
     printf( "messageType %08lx, arg %08lx\n",
         (long unsigned int)messageType,
         (long unsigned int)messageArgument );
@@ -69,6 +72,10 @@ MySleepCallBack( void * refCon, io_service_t service, natural_t messageType, voi
 
 int notify_main( int argc, char **argv )
 {
+
+    (void) argc; // Squelch compiler warning of unused variable
+    (void) argv; // Squelch compiler warning of unused variable
+
     // notification port allocated by IORegisterForSystemPower
     IONotificationPortRef  notifyPortRef;
 

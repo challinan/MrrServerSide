@@ -144,19 +144,6 @@
      <string>Run</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="netcat_pButton">
-    <property name="geometry">
-     <rect>
-      <x>490</x>
-      <y>260</y>
-      <width>100</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>NetCat</string>
-    </property>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -164,7 +151,7 @@
      <x>0</x>
      <y>0</y>
      <width>709</width>
-     <height>22</height>
+     <height>36</height>
     </rect>
    </property>
   </widget>

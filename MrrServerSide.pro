@@ -2,7 +2,7 @@ QT       += core gui serialport multimedia
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++17
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -14,8 +14,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+macx {
+    QMAKE_MAC_SDK = macosx12.3
+}
+
 SOURCES += \
-    gstreamer_serverside.cpp \
     idle_sleep_notifications.c \
     main.cpp \
     mainwindow.cpp \
@@ -24,7 +27,6 @@ SOURCES += \
     serialcomms.cpp
 
 HEADERS += \
-    gstreamer_serverside.h \
     mainwindow.h \
     config_object.h \
     networkcomms.h \
@@ -34,7 +36,8 @@ FORMS += \
     mainwindow.ui \
     configdialog.ui
 
-QMAKE_MACOSX_DEPLOYMENT_TARGET = "10.15"
+# QMAKE_MACOSX_DEPLOYMENT_TARGET = "10.15"
+QMAKE_MACOSX_DEPLOYMENT_TARGET = "12.6"
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
