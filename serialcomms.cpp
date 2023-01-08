@@ -8,6 +8,11 @@ SerialComms::SerialComms(QObject *parent)
     port_info_list = QSerialPortInfo::availablePorts();
     qDebug() << Qt::endl << "SerialComms::SerialComms() entered";
 
+    // TODO - Hardcoded
+    // config_serial_str should come from ${HOME}/.macrr/*.ini
+    config_serial_str = QString("cu.usbserial-FTH159K4");
+    enumerate_serial_devices();
+
 }
 
 SerialComms::~SerialComms() {
@@ -34,6 +39,7 @@ void SerialComms::enumerate_serial_devices() {
     QList<QSerialPortInfo>::iterator i;
     for (i = port_info_list.begin(); i != port_info_list.end(); i++) {
         QString s_tmp = i->portName();
+        qDebug() << s_tmp;
         if ( s_tmp.startsWith("cu.usbserial") ) {
             emit on_serial_port_detected(s_tmp);
             if ( s_tmp.compare(config_serial_str) == 0 ) {        // This is our configured value

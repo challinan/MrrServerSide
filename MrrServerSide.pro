@@ -1,8 +1,9 @@
-QT       += core gui serialport multimedia
+QT       += core serialport multimedia
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += widgets
 
 CONFIG += c++17
+CONFIG += console
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -15,38 +16,31 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 macx {
-    QMAKE_MAC_SDK = macosx12.3
+    QMAKE_MAC_SDK = macosx11.0
 }
 
 SOURCES += \
-    idle_sleep_notifications.c \
     main.cpp \
-    mainwindow.cpp \
-    config_object.cpp \
+    mainprocess.cpp \
     networkcomms.cpp \
     serialcomms.cpp
 
 HEADERS += \
-    mainwindow.h \
-    config_object.h \
+    mainprocess.h \
     networkcomms.h \
     serialcomms.h
 
-FORMS += \
-    mainwindow.ui \
-    configdialog.ui
 
 # QMAKE_MACOSX_DEPLOYMENT_TARGET = "10.15"
 QMAKE_MACOSX_DEPLOYMENT_TARGET = "12.6"
 
 # Default rules for deployment.
-qnx: target.path = /tmp/$${TARGET}/bin
-else: unix:!android: target.path = /opt/$${TARGET}/bin
+target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 # GStreamer support
-macx: LIBS += -L/Library/Frameworks/GStreamer.framework/Libraries -lgstreamer-1.0.0 -lglib-2.0.0 -lgobject-2.0.0
-INCLUDEPATH += /Library/Frameworks/GStreamer.framework/Headers
+macx: LIBS += -L/Library/Frameworks/GStreamer.framework/Versions/1.0/Libraries -lgstreamer-1.0.0 -lglib-2.0.0 -lgobject-2.0.0
+INCLUDEPATH += /Library/Frameworks/GStreamer.framework/Versions/1.0/Headers
 
 DISTFILES += \
     TODO.txt
